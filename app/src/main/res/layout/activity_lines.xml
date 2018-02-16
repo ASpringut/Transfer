@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    tools:context="com.polarizedraven.transfer.LineSelector"
+    tools:layout_editor_absoluteY="81dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/onetrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/twotrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/twotrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_1" />
+
+        <ImageView
+            android:id="@+id/twotrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/threetrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/onetrain"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_2" />
+
+        <ImageView
+            android:id="@+id/threetrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/twotrain"
+            app:layout_constraintTop_toTopOf="@+id/twotrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_3" />
+
+        <ImageView
+            android:id="@+id/fourtrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/fivetrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/fivetrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_4" />
+
+        <ImageView
+            android:id="@+id/fivetrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/sixtrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/fourtrain"
+            app:layout_constraintTop_toBottomOf="@+id/twotrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_5" />
+
+        <ImageView
+            android:id="@+id/sixtrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/fivetrain"
+            app:layout_constraintTop_toTopOf="@+id/fivetrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_6" />
+
+        <ImageView
+            android:id="@+id/seventrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/shuttle"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/Ltrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_7" />
+
+        <ImageView
+            android:id="@+id/Atrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/Ctrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/Ctrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_a" />
+
+        <ImageView
+            android:id="@+id/Ctrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/Etrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Atrain"
+            app:layout_constraintTop_toBottomOf="@+id/shuttle"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_c" />
+
+        <ImageView
+            android:id="@+id/Etrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Ctrain"
+            app:layout_constraintTop_toTopOf="@+id/Ctrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_e" />
+
+        <ImageView
+            android:id="@+id/Btrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/Dtrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/Dtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_b" />
+
+        <ImageView
+            android:id="@+id/Dtrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/Ftrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Btrain"
+            app:layout_constraintTop_toBottomOf="@+id/Ctrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_d" />
+
+        <ImageView
+            android:id="@+id/Ftrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/Mtrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Dtrain"
+            app:layout_constraintTop_toTopOf="@+id/Dtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_f" />
+
+        <ImageView
+            android:id="@+id/Mtrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Ftrain"
+            app:layout_constraintTop_toTopOf="@+id/Dtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_m" />
+
+        <ImageView
+            android:id="@+id/Ntrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/Qtrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/Qtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_n" />
+
+        <ImageView
+            android:id="@+id/Qtrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/Rtrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Ntrain"
+            app:layout_constraintTop_toBottomOf="@+id/Dtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_q" />
+
+        <ImageView
+            android:id="@+id/Rtrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/Wtrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Qtrain"
+            app:layout_constraintTop_toTopOf="@+id/Qtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_r" />
+
+        <ImageView
+            android:id="@+id/Wtrain"
+            android:layout_width="58dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Rtrain"
+            app:layout_constraintTop_toTopOf="@+id/Qtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_w" />
+
+        <ImageView
+            android:id="@+id/shuttle"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/Ltrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/seventrain"
+            app:layout_constraintTop_toTopOf="@+id/Ltrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_s" />
+
+        <ImageView
+            android:id="@+id/Ltrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/Gtrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/shuttle"
+            app:layout_constraintTop_toBottomOf="@+id/fivetrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_l" />
+
+        <ImageView
+            android:id="@+id/Gtrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Ltrain"
+            app:layout_constraintTop_toTopOf="@+id/Ltrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_g" />
+
+        <ImageView
+            android:id="@+id/Jtrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/Ztrain"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Qtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_j" />
+
+        <ImageView
+            android:id="@+id/Ztrain"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/Jtrain"
+            app:layout_constraintTop_toTopOf="@+id/Jtrain"
+            app:srcCompat="@drawable/ic_nycs_bull_trans_z" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

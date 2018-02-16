@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="lineRed">#EE352E</color>
+    <color name="lineGreen">#00933C</color>
+    <color name="lineBlue">#2850AD</color>
+    <color name="lineOrange">#FF6319</color>
+    <color name="linePurple">#B933AD</color>
+    <color name="lineYellow">#FCCC0A</color>
+    <color name="lineLime">#6CBE45</color>
+    <color name="lineGray">#A7A9AC</color>
+    <color name="lineDarkGrey">#808183</color>
+    <color name="lineBrown">#963</color>
+
+</resources>
