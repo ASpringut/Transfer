@@ -15,8 +15,8 @@ public class LineLoader extends AsyncTaskLoader<Cursor> {
     private static final String TAG = LineLoader.class.toString();
 
     //Cursor adapters require a rowid
-    public static final String[] COLUMNS = {StopsDatabase.ROW_ID, StopsDatabase.STOP_COLUMN, StopsDatabase.LINE_COLUMN};
-    private static final String SELECTION = StopsDatabase.LINE_COLUMN + " = ?";
+    public static final String[] COLUMNS = {StopsDatabase.ROW_ID, StopsDatabase.STOP_COLUMN, StopsDatabase.LINE_ID_COLUMN};
+    private static final String SELECTION = String.format("%s IN (SELECT DISTINCT line_id FROM lines WHERE line_name = ?)", StopsDatabase.LINE_ID_COLUMN);
 
     private final Line line;
 
@@ -36,7 +36,7 @@ public class LineLoader extends AsyncTaskLoader<Cursor> {
                 selectionArgs,
                 null,
                 null,
-                StopsDatabase.STOPNUMBER_COLUMN,
+                StopsDatabase.STOP_NUMBER_COLUMN,
                 null);
 
         return cursor;

@@ -25,8 +25,8 @@ public enum Line {
     F(0xFFFF6319),
     M(0xFFFF6319),
 
-    J(0xFF000963),
-    Z(0xFF000963),
+    J(0xFF996633),
+    Z(0xFF996633),
 
     G(0xFF6CBE45),
 

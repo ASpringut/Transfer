@@ -56,15 +56,15 @@ public class LineViewer extends AppCompatActivity
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        Log.d("asdf",String.valueOf(position));
         Cursor c = (Cursor) adapterView.getItemAtPosition(position);
-        int lineIndex = java.util.Arrays.asList(LineLoader.COLUMNS).indexOf(StopsDatabase.LINE_COLUMN);
+        int lineIndex = java.util.Arrays.asList(LineLoader.COLUMNS).indexOf(StopsDatabase.LINE_ID_COLUMN);
         int stopIndex = java.util.Arrays.asList(LineLoader.COLUMNS).indexOf(StopsDatabase.STOP_COLUMN);
-        String line = c.getString(lineIndex);
+
+        int line_id = c.getInt(lineIndex);
         String stop = c.getString(stopIndex);
 
         Intent myIntent = new Intent(this, StationViewer.class);
-        myIntent.putExtra(StationViewer.KEY_LINE, Line.valueOf(line));
+        myIntent.putExtra(StationViewer.KEY_LINE_ID, line_id);
         myIntent.putExtra(StationViewer.KEY_STOP, stop);
         startActivity(myIntent);
     }

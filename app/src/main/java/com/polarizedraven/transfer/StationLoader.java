@@ -12,22 +12,22 @@ public class StationLoader extends AsyncTaskLoader<Cursor> {
     private static final String TAG = StationLoader.class.toString();
 
     //Cursor adapters require a rowid
-    public static final String[] COLUMNS = {StopsDatabase.ROW_ID, StopsDatabase.STOP_COLUMN, StopsDatabase.LINE_COLUMN};
-    private static final String SELECTION = String.format("%s = ? AND %s = ?", StopsDatabase.LINE_COLUMN, StopsDatabase.STOP_COLUMN);
+    public static final String[] COLUMNS = {StopsDatabase.ROW_ID, StopsDatabase.STOP_COLUMN, StopsDatabase.LINE_ID_COLUMN};
+    private static final String SELECTION = String.format("%s = ? AND %s = ?", StopsDatabase.LINE_ID_COLUMN, StopsDatabase.STOP_COLUMN);
 
-    private final Line line;
+    private final int line_id;
     private final String stop;
 
-    public StationLoader (Context context, Line line, String stop){
+    public StationLoader (Context context, int line_id, String stop){
         super(context);
-        this.line = line;
+        this.line_id = line_id;
         this.stop = stop;
         onContentChanged();
     }
 
     @Override
     public Cursor loadInBackground() {
-        String[] selectionArgs = {line.toString(), stop};
+        String[] selectionArgs = {String.valueOf(line_id), stop};
         StopsDatabase sd = new StopsDatabase(super.getContext());
         Cursor cursor = sd.getReadableDatabase().query(StopsDatabase.STOP_TABLE,
                 COLUMNS,
@@ -35,7 +35,7 @@ public class StationLoader extends AsyncTaskLoader<Cursor> {
                 selectionArgs,
                 null,
                 null,
-                StopsDatabase.STOPNUMBER_COLUMN,
+                StopsDatabase.STOP_NUMBER_COLUMN,
                 String.valueOf(1));
 
         return cursor;

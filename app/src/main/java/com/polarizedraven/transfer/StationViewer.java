@@ -4,8 +4,6 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -14,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,11 +22,11 @@ import android.widget.TextView;
 
 public class StationViewer extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final String KEY_LINE = "KEY_LINE";
+    public static final String KEY_LINE_ID = "KEY_LINE_ID";
     public static final String KEY_STOP = "KEY_STATION";
 
     private Toolbar toolbar;
-    private Line line;
+    private int line_id;
     private String stop;
 
     /**
@@ -67,7 +64,7 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        line = (Line) getIntent().getSerializableExtra(StationViewer.KEY_LINE);
+        line_id = getIntent().getIntExtra(StationViewer.KEY_LINE_ID,0);
         stop = getIntent().getStringExtra(StationViewer.KEY_STOP);
 
         getLoaderManager().initLoader(0,null, this);
@@ -99,7 +96,7 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public Loader onCreateLoader(int i, Bundle bundle) {
-        StationLoader l = new StationLoader(this, line, stop);
+        StationLoader l = new StationLoader(this, line_id, stop);
         return l;
     }
 
