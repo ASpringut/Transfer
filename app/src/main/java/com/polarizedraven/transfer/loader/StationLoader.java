@@ -1,8 +1,10 @@
-package com.polarizedraven.transfer;
+package com.polarizedraven.transfer.loader;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.database.Cursor;
+
+import com.polarizedraven.transfer.StopsDatabase;
 
 /**
  * Created by aaron on 2/16/18.

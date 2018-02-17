@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,10 +21,16 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.polarizedraven.transfer.loader.StationLoader;
+import com.polarizedraven.transfer.loader.TerminusLoader;
+
 public class StationViewer extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final String KEY_LINE_ID = "KEY_LINE_ID";
     public static final String KEY_STOP = "KEY_STATION";
+
+    private static final int STATION_LOADER_ID = 0;
+    private static final int TERMINUS_LOADER_ID = 1;
 
     private Toolbar toolbar;
     private int line_id;
@@ -37,12 +44,13 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private StationAdapter stationAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private TabLayout mTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,24 +59,17 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
         line_id = getIntent().getIntExtra(StationViewer.KEY_LINE_ID,0);
         stop = getIntent().getStringExtra(StationViewer.KEY_STOP);
 
-        getLoaderManager().initLoader(0,null, this);
-
+        getLoaderManager().initLoader(STATION_LOADER_ID,null, this);
+        getLoaderManager().initLoader(TERMINUS_LOADER_ID,null, this);
     }
 
 
@@ -96,20 +97,46 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public Loader onCreateLoader(int i, Bundle bundle) {
-        StationLoader l = new StationLoader(this, line_id, stop);
-        return l;
+        switch (i){
+            case STATION_LOADER_ID:
+                return new StationLoader(this, line_id, stop);
+            case TERMINUS_LOADER_ID:
+                return new TerminusLoader(this, line_id);
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader loader, Cursor c) {
+        switch (loader.getId()) {
+            case STATION_LOADER_ID:
+                c.moveToFirst();
+                toolbar.setTitle(c.getString(c.getColumnIndex(StopsDatabase.STOP_COLUMN)));
+                return;
+            case TERMINUS_LOADER_ID:
+                setupStations(c);
+            default:
+                return;
+        }
+    }
+
+    private void setupStations(Cursor c) {
         c.moveToFirst();
-        toolbar.setTitle(c.getString(c.getColumnIndex(StopsDatabase.STOP_COLUMN)));
+        String startTerminus = c.getString(c.getColumnIndex(StopsDatabase.STOP_COLUMN));
+        c.moveToNext();
+        String endTerminus = c.getString(c.getColumnIndex(StopsDatabase.STOP_COLUMN));
+
+        stationAdapter = new StationAdapter(getSupportFragmentManager(), startTerminus, endTerminus);
+        mViewPager.setAdapter(stationAdapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        mTabLayout.getTabAt(0).setText(startTerminus);
+        mTabLayout.getTabAt(1).setText(endTerminus);
     }
 
     @Override
-    public void onLoaderReset(Loader loader) {
-
-    }
+    public void onLoaderReset(Loader loader) {}
 
     /**
      * A placeholder fragment containing a simple view.
@@ -119,7 +146,7 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
          * The fragment argument representing the section number for this
          * fragment.
          */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+        private static final String ARG_TITLE = "title";
 
         public PlaceholderFragment() {
         }
@@ -128,10 +155,10 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(String title) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putString(ARG_TITLE, title);
             fragment.setArguments(args);
             return fragment;
         }
@@ -141,7 +168,7 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_station, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            textView.setText(getArguments().getCharSequence(ARG_TITLE));
             return rootView;
         }
     }
@@ -150,23 +177,40 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class StationAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        private String startTerminus;
+        private String endTerminus;
+
+        public StationAdapter(FragmentManager fm, String startTerminus, String endTerminus) {
             super(fm);
+            this.startTerminus = startTerminus;
+            this.endTerminus = endTerminus;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (position == 0) {
+                return startTerminus;
+            } else {
+                return endTerminus;
+            }
         }
 
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            if (position == 0) {
+                return PlaceholderFragment.newInstance(startTerminus);
+            } else {
+                return PlaceholderFragment.newInstance(endTerminus);
+            }
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 2;
+            return 2;//always two ends
         }
     }
 }

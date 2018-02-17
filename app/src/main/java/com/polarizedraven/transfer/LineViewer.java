@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.polarizedraven.transfer.loader.LineLoader;
+
 public class LineViewer extends AppCompatActivity
                         implements LoaderManager.LoaderCallbacks<Cursor>,
                                    AdapterView.OnItemClickListener {
