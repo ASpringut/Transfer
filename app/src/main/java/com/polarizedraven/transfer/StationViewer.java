@@ -19,10 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.polarizedraven.transfer.loader.StationLoader;
 import com.polarizedraven.transfer.loader.TerminusLoader;
+import com.polarizedraven.transfer.view.TrainView;
 
 public class StationViewer extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -55,6 +57,7 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_station);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -167,8 +170,7 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_station, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getArguments().getCharSequence(ARG_TITLE));
+            TrainView trainView = (TrainView) rootView.findViewById(R.id.train_diagram);
             return rootView;
         }
     }

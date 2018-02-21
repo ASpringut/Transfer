@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TrainView">
+        <attr name="boardingSide" format="enum">
+            <enum name="right" value="0"/>
+            <enum name="left" value="1"/>
+        </attr>
+        <attr name="trainDirection" format="enum">
+            <enum name="up" value="0"/>
+            <enum name="down" value="1"/>
+        </attr>
+        <attr name="carWidth" format='float'/>
+        <attr name="carLength" format='float'/>
+        <attr name="numberOfCars" format="integer"/>
+
+
+    </declare-styleable>
+</resources>
