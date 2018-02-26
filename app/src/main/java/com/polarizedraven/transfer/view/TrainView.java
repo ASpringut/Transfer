@@ -12,9 +12,11 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.polarizedraven.transfer.Division;
 import com.polarizedraven.transfer.R;
 
-import java.util.jar.Attributes;
+import java.util.ArrayList;
+
 
 /**
  * Created by aaron on 2/17/18.
@@ -28,6 +30,12 @@ public class TrainView extends View {
     private final int boardingSide;
     private final int trainDirection;
     private final float interCarLength = 2;
+    private final Division division = Division.A;
+    private final float doorLength;
+    private final float doorWidth;
+
+    private  ArrayList<Car> cars;
+
 
     private int height;
     private int width;
@@ -47,6 +55,11 @@ public class TrainView extends View {
         carNumber = a.getInteger(R.styleable.TrainView_numberOfCars, 0);
         carWidth = a.getFloat(R.styleable.TrainView_carWidth, 0);
         carLength = a.getFloat(R.styleable.TrainView_carLength, 0);
+        doorWidth = carWidth*2f;
+        doorLength = carLength*2f/3f;
+
+
+        cars = new ArrayList<Car>();
     }
 
     @Override
@@ -93,6 +106,9 @@ public class TrainView extends View {
         float carCornerRad = ((float)(right-left))/8.0f;
         int halfPos = (bottom - top)/2 + top;
 
+        /**
+         * Draw the car body
+         */
         if (isFirst) {
             //round the front of the first car
             canvas.drawRoundRect(left, top, right, bottom, carCornerRad, carCornerRad, carPaint);
@@ -106,6 +122,27 @@ public class TrainView extends View {
             canvas.drawRect(left, top, right, bottom, carPaint);
         }
 
+        /**
+         * Draw the doors on the car 3 if a-division line 4 if b-division line
+         */
+
+        Paint doorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        doorPaint.setColor(context.getResources().getColor(R.color.lineBlue));
+
+        if (division == Division.A) {
+            int doorSpacing = (top-bottom)/4;
+            for (int i=0;i<3;i++) {
+                Rect doorRect = new Rect(right-(int)doorWidth, (int) (bottom +(doorSpacing*(i+1)-(doorLength*0.5))),right, (int) (bottom +(doorSpacing*(i+1)+(doorLength*0.5))));
+                canvas.drawRect(doorRect, doorPaint);
+            }
+        } else {
+
+        }
+
+
+        /**
+         * Draw the text for the car number
+         */
         float textSize = (bottom-top)*2.0f/4.0f;
         TextPaint textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
@@ -123,7 +160,6 @@ public class TrainView extends View {
         Rect b = new Rect();
         textPaint.getTextBounds(carText, (int) 0,carText.length(), b);
 
-        int numberOfTextLines = sl.getLineCount();
         float textYCoordinate =  bounds.exactCenterY() + b.height()/2.0f - b.bottom;
         float textXCoordinate = bounds.exactCenterX() - b.width()/2.0f - b.left;
         canvas.drawText(carText,textXCoordinate,textYCoordinate,textPaint);
@@ -141,5 +177,7 @@ public class TrainView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         width = w;
         height = h;
+        
+
     }
 }
