@@ -2,7 +2,10 @@ package com.polarizedraven.transfer.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 
+import com.polarizedraven.transfer.R;
 import com.polarizedraven.transfer.loader.Division;
 
 import java.util.ArrayList;
@@ -17,15 +20,18 @@ public class Train {
     private final int carNumber;
     private final float widthToHeightRatio;
     private final float interCarLenToLen;
-    private int height = 0;
-    private int width = 0;
-    private final ArrayList<Car> cars = new ArrayList<Car>();
+    private final float conductorBoardToLen = 1f;//always a quarter of a car long
+    //always drawn at the front of the specified car
+    private final int conductorLocation;
+    private final ArrayList<Car> cars = new ArrayList<>();
+    private Rect conductorBoard = new Rect(0,0,0,0);
 
-    public Train(Division division, int carNumber, float widthToHeightRatio, float interCarLenToCarLen) {
+    public Train(Division division, int carNumber, float widthToHeightRatio, float interCarLenToCarLen, int conductorLocation) {
         this.division = division;
         this.carNumber = carNumber;
         this.widthToHeightRatio = widthToHeightRatio;
         this.interCarLenToLen = interCarLenToCarLen;
+        this.conductorLocation = conductorLocation;
     }
 
     /**
@@ -34,7 +40,6 @@ public class Train {
      * @return the width that this view will take
      */
     public int setSize(int height) {
-        this.height = height;
         /**
          *Clear the current cars and layout the new cars
          */
@@ -67,6 +72,19 @@ public class Train {
                 currentHeight += interCarDrawHeight;
             }
         }
+
+        //get the location of the cars to display the conductors stripe-board in-betweeen
+        Rect conductorsCar = cars.get(conductorLocation).getCarDrawRect();
+        Rect prevCar = cars.get(conductorLocation-1).getCarDrawRect();
+        int midpoint = (conductorsCar.top + prevCar.bottom)/2;
+        int conductorBoardHeight = (int) (carDrawHeight*conductorBoardToLen);
+        int conductorBoardWidth = conductorBoardHeight/6;
+        int conductorTop = midpoint-conductorBoardHeight/2;
+        int conductorLeft = conductorsCar.left - conductorBoardWidth;
+        int conductorBottom = conductorTop + conductorBoardHeight;
+        int conductorRight = conductorsCar.left;
+        conductorBoard = new Rect(conductorLeft,conductorTop,conductorRight,conductorBottom);
+
         return carDrawWidth;
     }
 
@@ -74,5 +92,8 @@ public class Train {
         for (Car car: cars) {
             car.draw(canvas, context);
         }
+        Drawable d = context.getResources().getDrawable(R.drawable.ic_stop_marker);
+        d.setBounds(conductorBoard);
+        d.draw(canvas);
     }
 }

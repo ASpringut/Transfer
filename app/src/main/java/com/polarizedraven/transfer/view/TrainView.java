@@ -31,6 +31,7 @@ public class TrainView extends View {
     private int width;
     private Train train;
     private Context context;
+    private int platformWidth;
 
     public TrainView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -44,7 +45,7 @@ public class TrainView extends View {
         carNumber = a.getInteger(R.styleable.TrainView_numberOfCars, 0);
         carWidth = a.getFloat(R.styleable.TrainView_carWidth, 0);
         carLength = a.getFloat(R.styleable.TrainView_carLength, 0);
-        train = new Train(division, carNumber, carWidth/carLength, 0.1f);
+        train = new Train(division, carNumber, carWidth/carLength, 0.1f, 5);
     }
 
     @Override
@@ -58,6 +59,8 @@ public class TrainView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         width = w;
         height = h;
+        //Technically trainWidth could be larger than w. This shouldnt happen except on extremely narrow screens.
         int trainWidth = train.setSize(height);
+        platformWidth = trainWidth/2;
     }
 }

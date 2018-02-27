@@ -124,6 +124,10 @@ public class Car {
         canvas.drawText(carText,textXCoordinate,textYCoordinate,textPaint);
     }
 
+    public Rect getCarDrawRect() {
+        return new Rect(carLeft,top,carRight,bottom);
+    }
+
     public enum CarType {
         FIRST,LAST, MIDDLE;
     }
