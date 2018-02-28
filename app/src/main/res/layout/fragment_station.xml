@@ -2,28 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
+    android:id="@+id/station_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layout_constraintVertical_weight="10"
     tools:context="com.polarizedraven.transfer.StationViewer$PlaceholderFragment">
 
-    <com.polarizedraven.transfer.view.TrainView
-        android:id="@+id/train_diagram"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:boardingSide="right"
-        app:carLength="50"
-        app:carWidth="35"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:numberOfCars="10"
-        app:trainDirection="up" />
+
 </android.support.constraint.ConstraintLayout>

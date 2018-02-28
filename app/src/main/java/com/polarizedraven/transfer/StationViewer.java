@@ -3,6 +3,7 @@ package com.polarizedraven.transfer;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 
 import com.polarizedraven.transfer.loader.StationLoader;
 import com.polarizedraven.transfer.loader.TerminusLoader;
+import com.polarizedraven.transfer.trainfragment.TrainFragment;
 import com.polarizedraven.transfer.view.TrainView;
 
 public class StationViewer extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -141,39 +143,7 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
     @Override
     public void onLoaderReset(Loader loader) {}
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_TITLE = "title";
 
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(String title) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putString(ARG_TITLE, title);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_station, container, false);
-            TrainView trainView = (TrainView) rootView.findViewById(R.id.train_diagram);
-            return rootView;
-        }
-    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -204,9 +174,9 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             if (position == 0) {
-                return PlaceholderFragment.newInstance(startTerminus);
+                return TrainFragment.newInstance(startTerminus);
             } else {
-                return PlaceholderFragment.newInstance(endTerminus);
+                return TrainFragment.newInstance(endTerminus);
             }
         }
 
