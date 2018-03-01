@@ -16,9 +16,12 @@ import com.polarizedraven.transfer.R;
 import com.polarizedraven.transfer.view.AutoResizeTextView;
 
 
+import java.util.ArrayList;
+
 import static android.support.constraint.ConstraintSet.CHAIN_SPREAD_INSIDE;
 import static android.support.constraint.ConstraintSet.END;
 import static android.support.constraint.ConstraintSet.MATCH_CONSTRAINT;
+import static android.support.constraint.ConstraintSet.PARENT_ID;
 import static android.support.constraint.ConstraintSet.RIGHT;
 import static android.support.constraint.ConstraintSet.LEFT;
 import static android.support.constraint.ConstraintSet.START;
@@ -41,6 +44,7 @@ public class TrainFragment extends Fragment {
     private static final int TRAIN_WIDTH = 100;
     private static final int DOOR_WIDTH = TRAIN_WIDTH*3/4;
     private static final int CONDUCTOR_BOARD_WIDTH = TRAIN_WIDTH/4;
+    private ArrayList<TrainIds> trains = new ArrayList<>();
 
     public TrainFragment() {
     }
@@ -64,14 +68,16 @@ public class TrainFragment extends Fragment {
         ConstraintLayout tcl = rootView.findViewById(R.id.station_layout);
         ConstraintSet cs = new ConstraintSet();
 
-        createCar(tcl,cs,true, true,5,10,3);
-        createCar(tcl,cs,true, false,4,8,4);
-
+        TrainIds train = createCar(tcl, cs, true, true, 5, 10, 3);
+        TrainIds train2 = createCar(tcl, cs, true, false, 4, 8, 4);
+        trains.add(train);
+        trains.add(train2);
 
         cs.applyTo(tcl);
         return rootView;
     }
 
+    //private addExit()
 
     /**
      * Create a train along with constraints
@@ -91,6 +97,18 @@ public class TrainFragment extends Fragment {
         int parentId = parent.getId();
 
         /**
+         * Draw a direction arrow (always up, never not up)
+         */
+        ImageView arrow = new ImageView(getContext());
+        int arrowId = View.generateViewId();
+        arrow.setId(arrowId);
+        arrow.setBackground(getResources().getDrawable(R.drawable.arrow_up));
+        parent.addView(arrow);
+        cs.constrainWidth(arrowId, TRAIN_WIDTH);
+        cs.constrainHeight(arrowId, TRAIN_WIDTH);
+        cs.connect(arrowId,TOP,parentId,TOP);
+
+        /**
          * Draw the cars
          */
         for(int i=0; i < carNumber; i++) {
@@ -106,7 +124,8 @@ public class TrainFragment extends Fragment {
 
             //first car gets a unique horizontal constraint, rest are constrained to the first
             if (i==0) {
-                //horizontal positioning happens after car numbers have been generated
+                cs.connect(carId,TOP, arrowId, BOTTOM);
+                cs.centerHorizontally(carId,arrowId);
             } else {
                 cs.centerHorizontally(carId,carIds[i-1]);
             }
@@ -145,22 +164,22 @@ public class TrainFragment extends Fragment {
             }
 
             if (bindRight) {
-                //constrain the first car to the first number
-                cs.connect(carIds[0], RIGHT, tvIds[0], LEFT);
+                //constrain the arrow to the first number
+                cs.connect(arrowId, RIGHT, tvIds[0], LEFT);
             } else {
                 //constrain the first car to the first number
-                cs.connect(carIds[0], LEFT, tvIds[0], RIGHT);
+                cs.connect(arrowId, LEFT, tvIds[0], RIGHT);
             }
 
         } else {
             //No numbers
             if (bindRight) {
                 //constrain the first car to the parent
-                cs.connect(carIds[0], RIGHT, parentId, RIGHT);
+                cs.connect(arrowId, RIGHT, parentId, RIGHT);
 
             } else {
                 //constrain the first car to the parent
-                cs.connect(carIds[0], LEFT, parentId, LEFT);
+                cs.connect(arrowId, LEFT, parentId, LEFT);
             }
         }
 
@@ -168,7 +187,7 @@ public class TrainFragment extends Fragment {
          * Manually create our vertical chain of cars
          */
         cs.setVerticalChainStyle(carIds[0], CHAIN_SPREAD_INSIDE);
-        cs.connect(carIds[0],TOP , parentId, TOP, INTER_TRAIN_MARGIN);
+        cs.connect(carIds[0],TOP , arrowId, BOTTOM, INTER_TRAIN_MARGIN);
         for(int i = 1; i < carIds.length; ++i) {
             cs.connect(carIds[i], TOP, carIds[i - 1], BOTTOM, INTER_TRAIN_MARGIN);
             cs.connect(carIds[i - 1], BOTTOM, carIds[i], TOP, INTER_TRAIN_MARGIN);
@@ -233,15 +252,15 @@ public class TrainFragment extends Fragment {
 }
 
 
-class TrainIds {
-    public int[] carIds;
-    public int[][] doorIds;
-    @Nullable
-    public int[] tvIds;
+    class TrainIds {
+        public int[] carIds;
+        public int[][] doorIds;
+        @Nullable
+        public int[] tvIds;
 
-    public TrainIds(int[] carIds, int[][] doorIds, @Nullable int[] tvIds) {
-        this.carIds = carIds;
-        this.doorIds = doorIds;
-        this.tvIds = tvIds;
+        public TrainIds(int[] carIds, int[][] doorIds, @Nullable int[] tvIds) {
+            this.carIds = carIds;
+            this.doorIds = doorIds;
+            this.tvIds = tvIds;
     }
 }
