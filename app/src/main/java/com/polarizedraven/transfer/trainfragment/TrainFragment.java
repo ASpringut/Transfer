@@ -14,6 +14,14 @@ import android.widget.ImageView;
 import com.polarizedraven.transfer.R;
 import com.polarizedraven.transfer.view.AutoResizeTextView;
 
+
+import static android.support.constraint.ConstraintSet.CHAIN_SPREAD_INSIDE;
+import static android.support.constraint.ConstraintSet.MATCH_CONSTRAINT;
+import static android.support.constraint.ConstraintSet.RIGHT;
+import static android.support.constraint.ConstraintSet.LEFT;
+import static android.support.constraint.ConstraintSet.TOP;
+import static android.support.constraint.ConstraintSet.BOTTOM;
+
 /**
  * Created by aaron on 2/27/18.
  */
@@ -56,7 +64,26 @@ public class TrainFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_station, container, false);
         ConstraintLayout tcl = rootView.findViewById(R.id.station_layout);
         ConstraintSet cs = new ConstraintSet();
-        int parentId = tcl.getId();
+
+        createCar(tcl,cs,true, true);
+        createCar(tcl,cs,true, false);
+
+
+        cs.applyTo(tcl);
+        return rootView;
+    }
+
+
+    /**
+     * Create a train along with constraints
+     * @param parent - the parent constraint layout to add the car to
+     * @param cs - constraint set to be applied to final view
+     * @param numberCars - if true the car will include numbered cars
+     * @param bindRight - if true the car will layout to the right side
+     * @return
+     */
+    private TrainIds createCar(ConstraintLayout parent, ConstraintSet cs, boolean numberCars, boolean bindRight) {
+        int parentId = parent.getId();
 
         /**
          * Draw the cars
@@ -68,9 +95,9 @@ public class TrainFragment extends Fragment {
             car.setId(carId);
             carIds[i] = carId;
             car.setBackgroundColor(getResources().getColor(R.color.lineDarkGrey));
-            tcl.addView(car);
+            parent.addView(car);
             cs.constrainWidth(carId, TRAIN_WIDTH);
-            cs.constrainHeight(carId, ConstraintSet.MATCH_CONSTRAINT);
+            cs.constrainHeight(carId, MATCH_CONSTRAINT);
 
             //first car gets a unique horizontal constraint, rest are constrained to the first
             if (i==0) {
@@ -80,33 +107,57 @@ public class TrainFragment extends Fragment {
             }
         }
 
-        /**
-         * Draw the car numbers
-         */
-        for(int i=0; i < carNumber; i++) {
-            //add a car
-            AutoResizeTextView tv = new AutoResizeTextView(getContext());
-            tv.setText(String.valueOf(i+1));
-            //set the text size overly large to begin, the view will automatically scale it down, but not up
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP,24);
-            //text should be as large as possible, must be set after setting text as resetting text resets this field
-            tv.setMaxTextSize(0f);
-            tv.setTextColor(getResources().getColor(R.color.textPrimary));
-            int tvId = View.generateViewId();
-            tv.setId(tvId);
-            tcl.addView(tv);
-            tvIds[i] = tvId;
-            tv.setGravity(Gravity.CENTER);
+        if (numberCars) {
+            /**
+             * Draw the car numbers
+             */
+            for (int i = 0; i < carNumber; i++) {
+                //add a car
+                AutoResizeTextView tv = new AutoResizeTextView(getContext());
+                tv.setText(String.valueOf(i + 1));
+                //set the text size overly large to begin, the view will automatically scale it down, but not up
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
+                //text should be as large as possible, must be set after setting text as resetting text resets this field
+                tv.setMaxTextSize(0f);
+                tv.setTextColor(getResources().getColor(R.color.textPrimary));
+                int tvId = View.generateViewId();
+                tv.setId(tvId);
+                parent.addView(tv);
+                tvIds[i] = tvId;
+                tv.setGravity(Gravity.CENTER);
 
-            cs.constrainWidth(tvId, TRAIN_WIDTH);
-            //match the height of the train cars
-            cs.connect(tvId,ConstraintSet.TOP,carIds[i],ConstraintSet.TOP);
-            cs.connect(tvId,ConstraintSet.BOTTOM,carIds[i],ConstraintSet.BOTTOM);
-            //numbers hug left
-            cs.connect(tvId,ConstraintSet.LEFT,parentId,ConstraintSet.LEFT);
+                cs.constrainWidth(tvId, TRAIN_WIDTH);
+                //match the height of the train cars
+                cs.connect(tvId, TOP, carIds[i], TOP);
+                cs.connect(tvId, BOTTOM, carIds[i], BOTTOM);
+                if (bindRight) {
+                    //numbers hug left
+                    cs.connect(tvId, RIGHT, parentId, RIGHT);
+                } else {
+                    //numbers hug left
+                    cs.connect(tvId, LEFT, parentId, LEFT);
+                }
+            }
+
+            if (bindRight) {
+                //constrain the first car to the first number
+                cs.connect(carIds[0], RIGHT, tvIds[0], LEFT);
+            } else {
+                //constrain the first car to the first number
+                cs.connect(carIds[0], LEFT, tvIds[0], RIGHT);
+            }
+
+        } else {
+            //No numbers
+            if (bindRight) {
+                //constrain the first car to the parent
+                cs.connect(carIds[0], RIGHT, parentId, RIGHT);
+
+            } else {
+                //constrain the first car to the parent
+                cs.connect(carIds[0], LEFT, parentId, LEFT);
+            }
         }
-
-        cs.connect(carIds[0],ConstraintSet.LEFT,tvIds[0],ConstraintSet.RIGHT);
 
 
 
@@ -115,13 +166,13 @@ public class TrainFragment extends Fragment {
         /**
          * Manually create our vertical chain of cars
          */
-        cs.setVerticalChainStyle(carIds[0],ConstraintSet.CHAIN_SPREAD_INSIDE);
-        cs.connect(carIds[0],ConstraintSet.TOP , parentId, ConstraintSet.TOP, INTER_TRAIN_MARGIN);
+        cs.setVerticalChainStyle(carIds[0], CHAIN_SPREAD_INSIDE);
+        cs.connect(carIds[0],TOP , parentId, TOP, INTER_TRAIN_MARGIN);
         for(int i = 1; i < carIds.length; ++i) {
-            cs.connect(carIds[i], ConstraintSet.TOP, carIds[i - 1], ConstraintSet.BOTTOM, INTER_TRAIN_MARGIN);
-            cs.connect(carIds[i - 1], ConstraintSet.BOTTOM, carIds[i], ConstraintSet.TOP, INTER_TRAIN_MARGIN);
+            cs.connect(carIds[i], TOP, carIds[i - 1], BOTTOM, INTER_TRAIN_MARGIN);
+            cs.connect(carIds[i - 1], BOTTOM, carIds[i], TOP, INTER_TRAIN_MARGIN);
         }
-        cs.connect(carIds[carIds.length - 1], ConstraintSet.BOTTOM, parentId, ConstraintSet.BOTTOM, INTER_TRAIN_MARGIN);
+        cs.connect(carIds[carIds.length - 1], BOTTOM, parentId, BOTTOM, INTER_TRAIN_MARGIN);
 
         /**
          * Add doors to the cars
@@ -135,29 +186,36 @@ public class TrainFragment extends Fragment {
                 doorView.setId(doorId);
                 doorIds[car][door] = doorId;
                 doorView.setBackgroundColor(getResources().getColor(R.color.lineLime));
-                tcl.addView(doorView);
-                cs.connect(doorId,ConstraintSet.RIGHT, carId,ConstraintSet.RIGHT);
+                parent.addView(doorView);
+                //doors layout towards center always
+                if (bindRight) {
+                    cs.connect(doorId, LEFT, carId, LEFT);
+                } else {
+                    cs.connect(doorId, RIGHT, carId, RIGHT);
+                }
                 cs.constrainWidth(doorId, DOOR_WIDTH);
-                cs.constrainHeight(doorId, ConstraintSet.MATCH_CONSTRAINT);
+                cs.constrainHeight(doorId, MATCH_CONSTRAINT);
                 cs.setVerticalWeight(doorId,1.0f);
             }
 
             /**
              * Create the chains that position the doors
              */
-            cs.setVerticalChainStyle(doorIds[0][0],ConstraintSet.CHAIN_SPREAD_INSIDE);
-            cs.connect(doorIds[car][0],ConstraintSet.TOP , carIds[car], ConstraintSet.TOP, DOOR_EDGE_MARGIN);
+            cs.setVerticalChainStyle(doorIds[0][0],CHAIN_SPREAD_INSIDE);
+            cs.connect(doorIds[car][0],TOP , carIds[car], TOP, DOOR_EDGE_MARGIN);
             for(int i = 1; i < doorIds[car].length; ++i) {
-                cs.connect(doorIds[car][i], ConstraintSet.TOP, doorIds[car][i - 1], ConstraintSet.BOTTOM, INTER_DOOR_MARGIN);
-                cs.connect(doorIds[car][i - 1], ConstraintSet.BOTTOM, doorIds[car][i], ConstraintSet.TOP, INTER_DOOR_MARGIN);
+                cs.connect(doorIds[car][i], TOP, doorIds[car][i - 1], BOTTOM, INTER_DOOR_MARGIN);
+                cs.connect(doorIds[car][i - 1], BOTTOM, doorIds[car][i], TOP, INTER_DOOR_MARGIN);
             }
-            cs.connect(doorIds[car][doorIds[car].length - 1], ConstraintSet.BOTTOM, carIds[car], ConstraintSet.BOTTOM, DOOR_EDGE_MARGIN);
+            cs.connect(doorIds[car][doorIds[car].length - 1], BOTTOM, carIds[car], BOTTOM, DOOR_EDGE_MARGIN);
 
         }
-
-
-        cs.applyTo(tcl);
-        return rootView;
+        return new TrainIds();
     }
+}
 
+
+class TrainIds {
+    public int[] carIds;
+    public int[][] doorIds;
 }
