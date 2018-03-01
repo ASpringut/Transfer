@@ -32,6 +32,7 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
 
     public static final String KEY_LINE_ID = "KEY_LINE_ID";
     public static final String KEY_STOP = "KEY_STATION";
+    public static final String KEY_LINE = "KEY_LINE";
 
     private static final int STATION_LOADER_ID = 0;
     private static final int TERMINUS_LOADER_ID = 1;
@@ -58,12 +59,16 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Line line = (Line) getIntent().getSerializableExtra(StationViewer.KEY_LINE);
+        setTheme(line.getTheme());
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_station);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);

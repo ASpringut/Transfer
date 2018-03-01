@@ -114,7 +114,6 @@ public class LineSelector extends AppCompatActivity implements View.OnClickListe
             case R.id.Wtrain:
                 return Line.W;
 
-
             default:
                 return Line.ONE;
         }

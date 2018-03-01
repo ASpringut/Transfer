@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,10 @@ public class LineAdapter extends CursorAdapter {
         }
 
         //reset the color from the line
-        lineImage.setColorFilter(line.getColor(), PorterDuff.Mode.SRC_ATOP);
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        int color = typedValue.data;
+        lineImage.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 
 

@@ -1,49 +1,50 @@
 package com.polarizedraven.transfer;
-import com.polarizedraven.transfer.R;
 /**
  * Created by aaron on 2/14/18.
  */
 
+
 public enum Line {
-    ONE(0xFFEE352E),
-    TWO(0xFFEE352E),
-    THREE(0xFFEE352E),
+    ONE(com.polarizedraven.transfer.R.style.Theme123),
+    TWO(com.polarizedraven.transfer.R.style.Theme123),
+    THREE(com.polarizedraven.transfer.R.style.Theme123),
 
-    FOUR(0xFF00933C),
-    FIVE(0xFF00933C),
-    SIX(0xFF00933C),
+    FOUR(com.polarizedraven.transfer.R.style.Theme456),
+    FIVE(com.polarizedraven.transfer.R.style.Theme456),
+    SIX(com.polarizedraven.transfer.R.style.Theme456),
 
-    SEVEN(0xFFB933AD),
-    SHUTTLE(0xFF808183),
+    SEVEN(com.polarizedraven.transfer.R.style.Theme7),
 
-    A(0xFF2850AD),
-    C(0xFF2850AD),
-    E(0xFF2850AD),
+    SHUTTLE(com.polarizedraven.transfer.R.style.ThemeS),
 
-    B(0xFFFF6319),
-    D(0xFFFF6319),
-    F(0xFFFF6319),
-    M(0xFFFF6319),
+    A(com.polarizedraven.transfer.R.style.ThemeACE),
+    C(com.polarizedraven.transfer.R.style.ThemeACE),
+    E(com.polarizedraven.transfer.R.style.ThemeACE),
 
-    J(0xFF996633),
-    Z(0xFF996633),
+    B(com.polarizedraven.transfer.R.style.ThemeBDFM),
+    D(com.polarizedraven.transfer.R.style.ThemeBDFM),
+    F(com.polarizedraven.transfer.R.style.ThemeBDFM),
+    M(com.polarizedraven.transfer.R.style.ThemeBDFM),
 
-    G(0xFF6CBE45),
+    J(com.polarizedraven.transfer.R.style.ThemeJZ),
+    Z(com.polarizedraven.transfer.R.style.ThemeJZ),
 
-    N(0xFFFCCC0A),
-    Q(0xFFFCCC0A),
-    R(0xFFFCCC0A),
-    W(0xFFFCCC0A),
+    G(com.polarizedraven.transfer.R.style.ThemeG),
 
-    L(0xFFA7A9AC);
+    N(com.polarizedraven.transfer.R.style.ThemeNQRW),
+    Q(com.polarizedraven.transfer.R.style.ThemeNQRW),
+    R(com.polarizedraven.transfer.R.style.ThemeNQRW),
+    W(com.polarizedraven.transfer.R.style.ThemeNQRW),
 
-    private int c;
+    L(com.polarizedraven.transfer.R.style.ThemeL);
 
-    Line(int color) {
-        c = color;
+    private int theme;
+
+    Line(int theme) {
+        this.theme = theme;
     }
 
-    public int getColor(){
-        return c;
+    public int getTheme(){
+        return theme;
     }
 }

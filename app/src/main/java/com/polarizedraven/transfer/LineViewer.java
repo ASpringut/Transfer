@@ -25,9 +25,10 @@ public class LineViewer extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        line = (Line) getIntent().getSerializableExtra(LineSelector.LINE_KEY);
+        setTheme(line.getTheme());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_line_viewer);
-        line = (Line) getIntent().getSerializableExtra(LineSelector.LINE_KEY);
         listView = findViewById(R.id.lineList);
         listView.setOnItemClickListener(this);
         getLoaderManager().initLoader(0,null,this);
@@ -68,6 +69,7 @@ public class LineViewer extends AppCompatActivity
         Intent myIntent = new Intent(this, StationViewer.class);
         myIntent.putExtra(StationViewer.KEY_LINE_ID, line_id);
         myIntent.putExtra(StationViewer.KEY_STOP, stop);
+        myIntent.putExtra(StationViewer.KEY_LINE,line);
         startActivity(myIntent);
     }
 }

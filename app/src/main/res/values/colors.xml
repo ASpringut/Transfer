@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#222222</color>
+    <color name="colorPrimaryDark">#111111</color>
     <color name="colorAccent">#FF4081</color>
     <color name="textPrimary">#666</color>
 
     <color name="lineRed">#EE352E</color>
+    <color name="lineRedDark">#89100b</color>
+
     <color name="lineGreen">#00933C</color>
+    <color name="lineGreenDark">#004f20</color>
+
     <color name="lineBlue">#2850AD</color>
+    <color name="lineBlueDark">#152a5a</color>
+
     <color name="lineOrange">#FF6319</color>
+    <color name="lineOrangeDark">#902e00</color>
+
     <color name="linePurple">#B933AD</color>
+    <color name="linePurpleDark">#691d62</color>
+
     <color name="lineYellow">#FCCC0A</color>
+    <color name="lineYellowDark">#8d7202</color>
+
     <color name="lineLime">#6CBE45</color>
+    <color name="lineLimeDark">#3a6824</color>
+
     <color name="lineGray">#A7A9AC</color>
+    <color name="lineGrayDark">#6b6d71</color>
+
     <color name="lineDarkGrey">#808183</color>
+    <color name="lineDarkGreyDark">#454647</color>
+
     <color name="lineBrown">#996633</color>
+    <color name="lineBrownDark">#4d331a</color>
 
 </resources>
