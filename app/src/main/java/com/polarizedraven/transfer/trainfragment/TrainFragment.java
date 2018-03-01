@@ -1,6 +1,7 @@
 package com.polarizedraven.transfer.trainfragment;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v4.app.Fragment;
@@ -16,9 +17,11 @@ import com.polarizedraven.transfer.view.AutoResizeTextView;
 
 
 import static android.support.constraint.ConstraintSet.CHAIN_SPREAD_INSIDE;
+import static android.support.constraint.ConstraintSet.END;
 import static android.support.constraint.ConstraintSet.MATCH_CONSTRAINT;
 import static android.support.constraint.ConstraintSet.RIGHT;
 import static android.support.constraint.ConstraintSet.LEFT;
+import static android.support.constraint.ConstraintSet.START;
 import static android.support.constraint.ConstraintSet.TOP;
 import static android.support.constraint.ConstraintSet.BOTTOM;
 
@@ -37,11 +40,7 @@ public class TrainFragment extends Fragment {
     private static final int DOOR_EDGE_MARGIN = 10;
     private static final int TRAIN_WIDTH = 100;
     private static final int DOOR_WIDTH = TRAIN_WIDTH*3/4;
-    private final int carNumber = 10;
-    private final int doorsPerCar = 3;
-    private final int[] carIds = new int[carNumber];
-    private final int[] tvIds = new int[carNumber];
-    private final int[][] doorIds = new int[carNumber][doorsPerCar];
+    private static final int CONDUCTOR_BOARD_WIDTH = TRAIN_WIDTH/4;
 
     public TrainFragment() {
     }
@@ -65,8 +64,8 @@ public class TrainFragment extends Fragment {
         ConstraintLayout tcl = rootView.findViewById(R.id.station_layout);
         ConstraintSet cs = new ConstraintSet();
 
-        createCar(tcl,cs,true, true);
-        createCar(tcl,cs,true, false);
+        createCar(tcl,cs,true, true,5,10,3);
+        createCar(tcl,cs,true, false,4,8,4);
 
 
         cs.applyTo(tcl);
@@ -80,9 +79,15 @@ public class TrainFragment extends Fragment {
      * @param cs - constraint set to be applied to final view
      * @param numberCars - if true the car will include numbered cars
      * @param bindRight - if true the car will layout to the right side
+     * @param conductorCar - the car where the conductor board will be drawn
      * @return
      */
-    private TrainIds createCar(ConstraintLayout parent, ConstraintSet cs, boolean numberCars, boolean bindRight) {
+    private TrainIds createCar(ConstraintLayout parent, ConstraintSet cs, boolean numberCars,
+                               boolean bindRight, int conductorCar, int carNumber, int doorsPerCar) {
+        int[] carIds = new int[carNumber];
+        int[] tvIds = new int[carNumber];
+        int[][] doorIds = new int[carNumber][doorsPerCar];
+
         int parentId = parent.getId();
 
         /**
@@ -159,10 +164,6 @@ public class TrainFragment extends Fragment {
             }
         }
 
-
-
-
-
         /**
          * Manually create our vertical chain of cars
          */
@@ -185,7 +186,7 @@ public class TrainFragment extends Fragment {
                 int doorId = View.generateViewId();
                 doorView.setId(doorId);
                 doorIds[car][door] = doorId;
-                doorView.setBackgroundColor(getResources().getColor(R.color.lineLime));
+                doorView.setBackgroundColor(getResources().getColor(R.color.lineBlue));
                 parent.addView(doorView);
                 //doors layout towards center always
                 if (bindRight) {
@@ -208,9 +209,26 @@ public class TrainFragment extends Fragment {
                 cs.connect(doorIds[car][i - 1], BOTTOM, doorIds[car][i], TOP, INTER_DOOR_MARGIN);
             }
             cs.connect(doorIds[car][doorIds[car].length - 1], BOTTOM, carIds[car], BOTTOM, DOOR_EDGE_MARGIN);
-
         }
-        return new TrainIds();
+
+        /**
+         * Draw the conductor board for the car
+         */
+        ImageView conductorBoard = new ImageView(getContext());
+        conductorBoard.setBackground(getContext().getDrawable(R.drawable.ic_stop_marker));
+        int boardId = View.generateViewId();
+        conductorBoard.setId(boardId);
+        parent.addView(conductorBoard);
+        cs.connect(boardId,BOTTOM,doorIds[conductorCar][0],BOTTOM);
+        cs.connect(boardId,TOP,doorIds[conductorCar-1][doorIds[conductorCar-1].length-1],TOP);
+        if(bindRight) {
+            cs.connect(boardId,END,carIds[0],START,10);
+        } else {
+            cs.connect(boardId,START,carIds[0],END,10);
+        }
+        cs.constrainHeight(boardId,MATCH_CONSTRAINT);
+        cs.constrainWidth(boardId,CONDUCTOR_BOARD_WIDTH);
+        return new TrainIds(carIds,doorIds,tvIds);
     }
 }
 
@@ -218,4 +236,12 @@ public class TrainFragment extends Fragment {
 class TrainIds {
     public int[] carIds;
     public int[][] doorIds;
+    @Nullable
+    public int[] tvIds;
+
+    public TrainIds(int[] carIds, int[][] doorIds, @Nullable int[] tvIds) {
+        this.carIds = carIds;
+        this.doorIds = doorIds;
+        this.tvIds = tvIds;
+    }
 }
