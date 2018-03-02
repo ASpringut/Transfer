@@ -42,7 +42,9 @@ public class TrainFragment extends Fragment {
     private static final int TRAIN_WIDTH = 100;
     private static final int DOOR_WIDTH = TRAIN_WIDTH*3/4;
     private static final int CONDUCTOR_BOARD_WIDTH = TRAIN_WIDTH/4;
-    private ArrayList<TrainIds> trains = new ArrayList<>();
+    private ArrayList<TrainIds> leftTrains = new ArrayList<>();
+    private ArrayList<TrainIds> rightTrains = new ArrayList<>();
+
 
     private Station station;
 
@@ -68,12 +70,23 @@ public class TrainFragment extends Fragment {
         ConstraintLayout tcl = rootView.findViewById(R.id.station_layout);
         ConstraintSet cs = new ConstraintSet();
 
-        TrainIds train = createCar(tcl, cs, true, true, 5, 10, 3,tcl.getId(), RIGHT);
-        TrainIds train2 = createCar(tcl, cs, true, false, 4, 8, 4,tcl.getId(), LEFT);
-        trains.add(train);
-        trains.add(train2);
-        TrainIds train3 = createCar(tcl, cs, false, false, 4, 8, 4,trains.get(1).conductorBoardId, RIGHT);
-        trains.add(train3);
+        Station s = Station.genericStation();
+
+        for(int i=0;i<s.leftTrains.size();i++) {
+            Train t = s.leftTrains.get(i);
+            int bindPoint = i==0?tcl.getId():leftTrains.get(i-1).conductorBoardId;
+            TrainIds tid = createCar(tcl, cs, i==0, false, t.conductorCar,
+                                     t.numberOfCars,t.doorsPerCar,bindPoint, i==0?LEFT:RIGHT);
+            leftTrains.add(tid);
+        }
+        for(int i=0;i<s.rightTrains.size();i++) {
+            Train t = s.rightTrains.get(i);
+            int bindPoint = i==0?tcl.getId():rightTrains.get(i-1).conductorBoardId;
+            TrainIds tid = createCar(tcl, cs, i==0, true, t.conductorCar,
+                                     t.numberOfCars,t.doorsPerCar,bindPoint, i==0?RIGHT:LEFT);
+            rightTrains.add(tid);
+        }
+
 
         cs.applyTo(tcl);
         return rootView;
