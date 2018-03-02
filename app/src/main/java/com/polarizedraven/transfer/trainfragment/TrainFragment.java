@@ -44,6 +44,8 @@ public class TrainFragment extends Fragment {
     private static final int CONDUCTOR_BOARD_WIDTH = TRAIN_WIDTH/4;
     private ArrayList<TrainIds> trains = new ArrayList<>();
 
+    private Station station;
+
     public TrainFragment() {
     }
 

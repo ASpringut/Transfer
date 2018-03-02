@@ -8,7 +8,20 @@ import java.util.ArrayList;
 
 public class Station {
 
-    private ArrayList<Train> leftTrains;
-    private ArrayList<Train> rightTrains;
+    public ArrayList<Train> leftTrains;
+    public ArrayList<Train> rightTrains;
 
+    public Station(){
+
+    }
+
+    static Station genericStation(){
+        Station station = new Station();
+        Train lt1 = new Train(10,3,5);
+        Train lt2 = new Train(10,3,5);
+        Train lt3 = new Train(10,3,5);
+
+        return station;
+    }
 }
+
