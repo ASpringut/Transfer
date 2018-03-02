@@ -3,7 +3,6 @@ package com.polarizedraven.transfer;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,20 +12,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.polarizedraven.transfer.loader.StationLoader;
 import com.polarizedraven.transfer.loader.TerminusLoader;
 import com.polarizedraven.transfer.trainfragment.TrainFragment;
-import com.polarizedraven.transfer.view.TrainView;
 
 public class StationViewer extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -68,12 +59,9 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
-
 
         line_id = getIntent().getIntExtra(StationViewer.KEY_LINE_ID,0);
         stop = getIntent().getStringExtra(StationViewer.KEY_STOP);
