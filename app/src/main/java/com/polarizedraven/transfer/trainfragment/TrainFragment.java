@@ -1,5 +1,6 @@
 package com.polarizedraven.transfer.trainfragment;
 
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -11,7 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.polarizedraven.transfer.Exit;
+import com.polarizedraven.transfer.ExitAnchor;
 import com.polarizedraven.transfer.R;
 import com.polarizedraven.transfer.view.AutoResizeTextView;
 
@@ -36,15 +40,17 @@ public class TrainFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_TITLE = "title";
+    private static final int LEFT_TRAINSET = 0;
+    private static final int RIGHT_TRAINSET = 1;
     private static final int INTER_TRAIN_MARGIN = 5;
     private static final int INTER_DOOR_MARGIN = 5;
     private static final int DOOR_EDGE_MARGIN = 10;
     private static final int TRAIN_WIDTH = 100;
     private static final int DOOR_WIDTH = TRAIN_WIDTH*3/4;
     private static final int CONDUCTOR_BOARD_WIDTH = TRAIN_WIDTH/4;
+    private ArrayList<ArrayList<TrainIds>> trains = new ArrayList<>();
     private ArrayList<TrainIds> leftTrains = new ArrayList<>();
     private ArrayList<TrainIds> rightTrains = new ArrayList<>();
-
 
     private Station station;
 
@@ -66,33 +72,155 @@ public class TrainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        trains.add(leftTrains);
+        trains.add(rightTrains);
+
+
         View rootView = inflater.inflate(R.layout.fragment_station, container, false);
         ConstraintLayout tcl = rootView.findViewById(R.id.station_layout);
         ConstraintSet cs = new ConstraintSet();
 
         Station s = Station.genericStation();
-
-        for(int i=0;i<s.leftTrains.size();i++) {
-            Train t = s.leftTrains.get(i);
+        for(int i=0;i<s.trains.get(0).size();i++) {
+            Train t = s.trains.get(0).get(i);
             int bindPoint = i==0?tcl.getId():leftTrains.get(i-1).conductorBoardId;
             TrainIds tid = createCar(tcl, cs, i==0, false, t.conductorCar,
                                      t.numberOfCars,t.doorsPerCar,bindPoint, i==0?LEFT:RIGHT);
             leftTrains.add(tid);
         }
-        for(int i=0;i<s.rightTrains.size();i++) {
-            Train t = s.rightTrains.get(i);
+
+        for(int i=0;i<s.trains.get(1).size();i++) {
+            Train t = s.trains.get(1).get(i);
             int bindPoint = i==0?tcl.getId():rightTrains.get(i-1).conductorBoardId;
             TrainIds tid = createCar(tcl, cs, i==0, true, t.conductorCar,
                                      t.numberOfCars,t.doorsPerCar,bindPoint, i==0?RIGHT:LEFT);
             rightTrains.add(tid);
         }
 
+        for(int i = 0; i<s.exits.size(); i++){
+            Exit e = s.exits.get(i);
+            addExit(e, cs, tcl);
+
+        }
 
         cs.applyTo(tcl);
         return rootView;
     }
 
-    private void addExit(){
+    private void addExit(Exit e, ConstraintSet cs, ConstraintLayout parent){
+        String text = e.exitText;
+        /**
+         * Draw the left anchors for the exit
+         */
+        int leftStartCar = e.leftExitAnchor.startCar;
+        int leftEndCar = e.leftExitAnchor.endCar;
+        int leftStartDoor = e.leftExitAnchor.startDoor;
+        int leftEndDoor = e.leftExitAnchor.endDoor;
+
+        TrainIds leftAnchorTrain = leftTrains.get(leftTrains.size()-1);
+        int startDoorId = leftAnchorTrain.doorIds[leftStartCar][leftStartDoor];
+        int endDoorId = leftAnchorTrain.doorIds[leftEndCar][leftEndDoor];
+
+        ImageView topBracket = new ImageView(getContext());
+        int topBracketId = View.generateViewId();
+        topBracket.setId(topBracketId);
+        topBracket.setBackgroundColor(getResources().getColor(R.color.lineRed));
+        parent.addView(topBracket);
+        cs.constrainWidth(topBracketId, TRAIN_WIDTH/3);
+        cs.constrainHeight(topBracketId, 10);
+
+        ImageView bottomBracket = new ImageView(getContext());
+        int bottomBracketId = View.generateViewId();
+        bottomBracket.setId(bottomBracketId);
+        bottomBracket.setBackgroundColor(getResources().getColor(R.color.lineRed));
+        parent.addView(bottomBracket);
+        cs.constrainWidth(bottomBracketId, TRAIN_WIDTH/3);
+        cs.constrainHeight(bottomBracketId, 10);
+
+        cs.connect(topBracketId,TOP,startDoorId,TOP);
+        cs.connect(bottomBracketId,BOTTOM,endDoorId,BOTTOM);
+        cs.connect(topBracketId,LEFT,startDoorId,RIGHT);
+        cs.connect(bottomBracketId,LEFT,endDoorId,RIGHT);
+
+        ImageView sideBracket = new ImageView(getContext());
+        int sideBracketId = View.generateViewId();
+        sideBracket.setId(sideBracketId);
+        sideBracket.setBackgroundColor(getResources().getColor(R.color.lineRed));
+        parent.addView(sideBracket);
+        cs.constrainWidth(sideBracketId, 10);
+        cs.constrainHeight(sideBracketId, MATCH_CONSTRAINT);
+
+        cs.connect(sideBracketId, TOP, topBracketId, TOP);
+        cs.connect(sideBracketId, RIGHT, topBracketId, RIGHT);
+        cs.connect(sideBracketId, BOTTOM, bottomBracketId, BOTTOM);
+
+
+        /**
+         * Draw the right anchors for the exit
+         */
+        int rightStartCar = e.rightExitAnchor.startCar;
+        int rightEndCar = e.rightExitAnchor.endCar;
+        int rightStartDoor = e.rightExitAnchor.startDoor;
+        int rightEndDoor = e.rightExitAnchor.endDoor;
+
+        TrainIds rightAnchorTrain = rightTrains.get(rightTrains.size()-1);
+        int rightStartDoorId = rightAnchorTrain.doorIds[rightStartCar][rightStartDoor];
+        int rightEndDoorId = rightAnchorTrain.doorIds[rightEndCar][rightEndDoor];
+
+        ImageView rightTopBracket = new ImageView(getContext());
+        int rightTopBracketId = View.generateViewId();
+        rightTopBracket.setId(rightTopBracketId);
+        rightTopBracket.setBackgroundColor(getResources().getColor(R.color.lineRed));
+        parent.addView(rightTopBracket);
+        cs.constrainWidth(rightTopBracketId, TRAIN_WIDTH/3);
+        cs.constrainHeight(rightTopBracketId, 10);
+
+        ImageView rightBottomBracket = new ImageView(getContext());
+        int rightBottomBracketId = View.generateViewId();
+        rightBottomBracket.setId(rightBottomBracketId);
+        rightBottomBracket.setBackgroundColor(getResources().getColor(R.color.lineRed));
+        parent.addView(rightBottomBracket);
+        cs.constrainWidth(rightBottomBracketId, TRAIN_WIDTH/3);
+        cs.constrainHeight(rightBottomBracketId, 10);
+
+        cs.connect(rightTopBracketId,TOP,rightStartDoorId,TOP);
+        cs.connect(rightBottomBracketId,BOTTOM,rightEndDoorId,BOTTOM);
+        cs.connect(rightTopBracketId,RIGHT,rightStartDoorId,LEFT);
+        cs.connect(rightBottomBracketId,RIGHT,rightEndDoorId,LEFT);
+
+        ImageView rightSideBracket = new ImageView(getContext());
+        int rightSideBracketId = View.generateViewId();
+        rightSideBracket.setId(rightSideBracketId);
+        rightSideBracket.setBackgroundColor(getResources().getColor(R.color.lineRed));
+        parent.addView(rightSideBracket);
+        cs.constrainWidth(rightSideBracketId, 10);
+        cs.constrainHeight(rightSideBracketId, MATCH_CONSTRAINT);
+
+        cs.connect(rightSideBracketId, TOP, rightTopBracketId, TOP);
+        cs.connect(rightSideBracketId, LEFT, rightTopBracketId, LEFT);
+        cs.connect(rightSideBracketId, BOTTOM, rightBottomBracketId, BOTTOM);
+
+        /**
+         * Draw the exit text
+         */
+
+        TextView exitTextView = new TextView(getContext());
+        int exitTextId = View.generateViewId();
+        exitTextView.setId(exitTextId);
+        parent.addView(exitTextView);
+        exitTextView.setText(e.exitText);
+        exitTextView.setGravity(Gravity.CENTER);
+        cs.constrainHeight(exitTextId, TRAIN_WIDTH*2);
+        cs.constrainWidth(exitTextId, MATCH_CONSTRAINT);
+
+        cs.connect(exitTextId,LEFT, sideBracketId, RIGHT);
+        cs.connect(exitTextId,RIGHT, rightSideBracketId, LEFT);
+        //text centers to the left exit by default
+        cs.centerVertically(exitTextId, sideBracketId);
+
+
+
+
 
     }
 
@@ -137,7 +265,14 @@ public class TrainFragment extends Fragment {
             int carId = View.generateViewId();
             car.setId(carId);
             carIds[i] = carId;
-            car.setBackgroundColor(getResources().getColor(R.color.lineDarkGrey));
+            //car.setBackgroundColor(getResources().getColor(R.color.lineDarkGrey));
+            //rotate the car based on side
+            if (bindRight) {
+                car.setImageDrawable(getResources().getDrawable(R.drawable.ic_carright));
+            } else {
+                car.setImageDrawable(getResources().getDrawable(R.drawable.ic_car));
+            }
+            car.setScaleType(ImageView.ScaleType.FIT_XY);
             parent.addView(car);
             cs.constrainWidth(carId, TRAIN_WIDTH);
             cs.constrainHeight(carId, MATCH_CONSTRAINT);
@@ -225,7 +360,12 @@ public class TrainFragment extends Fragment {
                 int doorId = View.generateViewId();
                 doorView.setId(doorId);
                 doorIds[car][door] = doorId;
-                doorView.setBackgroundColor(getResources().getColor(R.color.lineBlue));
+                if (bindRight) {
+                    doorView.setImageDrawable(getResources().getDrawable(R.drawable.ic_doorright));
+                } else {
+                    doorView.setImageDrawable(getResources().getDrawable(R.drawable.ic_door));
+                }
+                doorView.setScaleType(ImageView.ScaleType.FIT_XY);
                 parent.addView(doorView);
                 //doors layout towards center always
                 if (bindRight) {
