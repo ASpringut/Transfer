@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.polarizedraven.transfer.Exit;
 import com.polarizedraven.transfer.ExitAnchor;
 import com.polarizedraven.transfer.R;
@@ -80,7 +81,11 @@ public class TrainFragment extends Fragment {
         ConstraintLayout tcl = rootView.findViewById(R.id.station_layout);
         ConstraintSet cs = new ConstraintSet();
 
-        Station s = Station.genericStation();
+        Gson gson = new Gson();
+        String station ="{\"exits\":[{\"exitText\":\"40thSt.&7thAv.\",\"leftExitAnchor\":{\"endCar\":1,\"endDoor\":1,\"startCar\":1,\"startDoor\":1},\"rightExitAnchor\":{\"endCar\":1,\"endDoor\":1,\"startCar\":1,\"startDoor\":1}},{\"exitText\":\"41stSt.&7thAv.\",\"leftExitAnchor\":{\"endCar\":5,\"endDoor\":0,\"startCar\":4,\"startDoor\":2},\"rightExitAnchor\":{\"endCar\":5,\"endDoor\":0,\"startCar\":4,\"startDoor\":2}},{\"exitText\":\"42stSt.&7thAv.\",\"leftExitAnchor\":{\"endCar\":9,\"endDoor\":2,\"startCar\":9,\"startDoor\":2},\"rightExitAnchor\":{\"endCar\":9,\"endDoor\":2,\"startCar\":9,\"startDoor\":2}}],\"trains\":[[{\"conductorCar\":5,\"doorsPerCar\":3,\"numberOfCars\":10}],[{\"conductorCar\":5,\"doorsPerCar\":3,\"numberOfCars\":10}]]}";
+        Station s = gson.fromJson(station, Station.class);
+
+
         for(int i=0;i<s.trains.get(0).size();i++) {
             Train t = s.trains.get(0).get(i);
             int bindPoint = i==0?tcl.getId():leftTrains.get(i-1).conductorBoardId;
@@ -120,13 +125,14 @@ public class TrainFragment extends Fragment {
         TrainIds leftAnchorTrain = leftTrains.get(leftTrains.size()-1);
         int startDoorId = leftAnchorTrain.doorIds[leftStartCar][leftStartDoor];
         int endDoorId = leftAnchorTrain.doorIds[leftEndCar][leftEndDoor];
+        int leftConductorBoard = leftAnchorTrain.conductorBoardId;
 
         ImageView topBracket = new ImageView(getContext());
         int topBracketId = View.generateViewId();
         topBracket.setId(topBracketId);
         topBracket.setBackgroundColor(getResources().getColor(R.color.lineRed));
         parent.addView(topBracket);
-        cs.constrainWidth(topBracketId, TRAIN_WIDTH/3);
+        cs.constrainWidth(topBracketId, MATCH_CONSTRAINT);
         cs.constrainHeight(topBracketId, 10);
 
         ImageView bottomBracket = new ImageView(getContext());
@@ -134,13 +140,15 @@ public class TrainFragment extends Fragment {
         bottomBracket.setId(bottomBracketId);
         bottomBracket.setBackgroundColor(getResources().getColor(R.color.lineRed));
         parent.addView(bottomBracket);
-        cs.constrainWidth(bottomBracketId, TRAIN_WIDTH/3);
+        cs.constrainWidth(bottomBracketId, MATCH_CONSTRAINT);
         cs.constrainHeight(bottomBracketId, 10);
 
-        cs.connect(topBracketId,TOP,startDoorId,TOP);
-        cs.connect(bottomBracketId,BOTTOM,endDoorId,BOTTOM);
+        cs.connect(topBracketId,BOTTOM,startDoorId,TOP);
+        cs.connect(bottomBracketId,TOP,endDoorId,BOTTOM);
         cs.connect(topBracketId,LEFT,startDoorId,RIGHT);
         cs.connect(bottomBracketId,LEFT,endDoorId,RIGHT);
+        cs.connect(topBracketId,RIGHT,leftConductorBoard,RIGHT);
+        cs.connect(bottomBracketId,RIGHT,leftConductorBoard,RIGHT);
 
         ImageView sideBracket = new ImageView(getContext());
         int sideBracketId = View.generateViewId();
@@ -151,7 +159,7 @@ public class TrainFragment extends Fragment {
         cs.constrainHeight(sideBracketId, MATCH_CONSTRAINT);
 
         cs.connect(sideBracketId, TOP, topBracketId, TOP);
-        cs.connect(sideBracketId, RIGHT, topBracketId, RIGHT);
+        cs.connect(sideBracketId, LEFT, topBracketId, RIGHT);
         cs.connect(sideBracketId, BOTTOM, bottomBracketId, BOTTOM);
 
 
@@ -166,6 +174,7 @@ public class TrainFragment extends Fragment {
         TrainIds rightAnchorTrain = rightTrains.get(rightTrains.size()-1);
         int rightStartDoorId = rightAnchorTrain.doorIds[rightStartCar][rightStartDoor];
         int rightEndDoorId = rightAnchorTrain.doorIds[rightEndCar][rightEndDoor];
+        int rightConductorBoard = rightAnchorTrain.conductorBoardId;
 
         ImageView rightTopBracket = new ImageView(getContext());
         int rightTopBracketId = View.generateViewId();
@@ -183,10 +192,12 @@ public class TrainFragment extends Fragment {
         cs.constrainWidth(rightBottomBracketId, TRAIN_WIDTH/3);
         cs.constrainHeight(rightBottomBracketId, 10);
 
-        cs.connect(rightTopBracketId,TOP,rightStartDoorId,TOP);
-        cs.connect(rightBottomBracketId,BOTTOM,rightEndDoorId,BOTTOM);
+        cs.connect(rightTopBracketId,BOTTOM,rightStartDoorId,TOP);
+        cs.connect(rightBottomBracketId,TOP,rightEndDoorId,BOTTOM);
         cs.connect(rightTopBracketId,RIGHT,rightStartDoorId,LEFT);
         cs.connect(rightBottomBracketId,RIGHT,rightEndDoorId,LEFT);
+        cs.connect(rightTopBracketId,LEFT,rightConductorBoard,LEFT);
+        cs.connect(rightBottomBracketId,LEFT,rightConductorBoard,LEFT);
 
         ImageView rightSideBracket = new ImageView(getContext());
         int rightSideBracketId = View.generateViewId();
@@ -197,7 +208,7 @@ public class TrainFragment extends Fragment {
         cs.constrainHeight(rightSideBracketId, MATCH_CONSTRAINT);
 
         cs.connect(rightSideBracketId, TOP, rightTopBracketId, TOP);
-        cs.connect(rightSideBracketId, LEFT, rightTopBracketId, LEFT);
+        cs.connect(rightSideBracketId, RIGHT, rightTopBracketId, LEFT);
         cs.connect(rightSideBracketId, BOTTOM, rightBottomBracketId, BOTTOM);
 
         /**
@@ -217,11 +228,6 @@ public class TrainFragment extends Fragment {
         cs.connect(exitTextId,RIGHT, rightSideBracketId, LEFT);
         //text centers to the left exit by default
         cs.centerVertically(exitTextId, sideBracketId);
-
-
-
-
-
     }
 
     /**
