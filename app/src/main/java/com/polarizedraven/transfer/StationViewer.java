@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.polarizedraven.transfer.loader.StationLoader;
-import com.polarizedraven.transfer.loader.TerminusLoader;
 import com.polarizedraven.transfer.trainfragment.TrainFragment;
 
 public class StationViewer extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -26,7 +25,6 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
     public static final String KEY_LINE = "KEY_LINE";
 
     private static final int STATION_LOADER_ID = 0;
-    private static final int TERMINUS_LOADER_ID = 1;
 
     private Toolbar toolbar;
     private int line_id;
@@ -67,7 +65,6 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
         stop = getIntent().getStringExtra(StationViewer.KEY_STOP);
 
         getLoaderManager().initLoader(STATION_LOADER_ID,null, this);
-        getLoaderManager().initLoader(TERMINUS_LOADER_ID,null, this);
     }
 
 
@@ -98,8 +95,6 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
         switch (i){
             case STATION_LOADER_ID:
                 return new StationLoader(this, line_id, stop);
-            case TERMINUS_LOADER_ID:
-                return new TerminusLoader(this, line_id);
             default:
                 return null;
         }
@@ -109,11 +104,8 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
     public void onLoadFinished(Loader loader, Cursor c) {
         switch (loader.getId()) {
             case STATION_LOADER_ID:
-                c.moveToFirst();
-                toolbar.setTitle(c.getString(c.getColumnIndex(StopsDatabase.STOP_COLUMN)));
-                return;
-            case TERMINUS_LOADER_ID:
                 setupStations(c);
+                return;
             default:
                 return;
         }
@@ -121,22 +113,23 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
 
     private void setupStations(Cursor c) {
         c.moveToFirst();
-        String startTerminus = c.getString(c.getColumnIndex(StopsDatabase.STOP_COLUMN));
-        c.moveToNext();
-        String endTerminus = c.getString(c.getColumnIndex(StopsDatabase.STOP_COLUMN));
+        toolbar.setTitle(c.getString(c.getColumnIndex(StopsDatabase.STOP_COLUMN)));
+        String firstTerminus = c.getString(c.getColumnIndex(StopsDatabase.DIRECTION1));
+        String secondTerminus = c.getString(c.getColumnIndex(StopsDatabase.DIRECTION2));
+        String firstLayout = c.getString(c.getColumnIndex(StopsDatabase.LAYOUT1));
+        String secondLayout = c.getString(c.getColumnIndex(StopsDatabase.LAYOUT2));
 
-        stationAdapter = new StationAdapter(getSupportFragmentManager(), startTerminus, endTerminus);
+
+        stationAdapter = new StationAdapter(getSupportFragmentManager(), firstTerminus, secondTerminus, firstLayout, secondLayout);
         mViewPager.setAdapter(stationAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-        mTabLayout.getTabAt(0).setText(startTerminus);
-        mTabLayout.getTabAt(1).setText(endTerminus);
+        mTabLayout.getTabAt(0).setText(firstTerminus);
+        mTabLayout.getTabAt(1).setText(secondTerminus);
     }
 
     @Override
     public void onLoaderReset(Loader loader) {}
-
-
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -144,21 +137,26 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
      */
     public class StationAdapter extends FragmentPagerAdapter {
 
-        private String startTerminus;
-        private String endTerminus;
+        private String firstTerminus;
+        private String secondTerminus;
+        private String firstLayout;
+        private String secondLayout;
 
-        public StationAdapter(FragmentManager fm, String startTerminus, String endTerminus) {
+        public StationAdapter(FragmentManager fm, String startTerminus, String endTerminus,
+                              String firstLayout, String secondLayout) {
             super(fm);
-            this.startTerminus = startTerminus;
-            this.endTerminus = endTerminus;
+            this.firstTerminus = startTerminus;
+            this.secondTerminus = endTerminus;
+            this.firstLayout = firstLayout;
+            this.secondLayout = secondLayout;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             if (position == 0) {
-                return startTerminus;
+                return firstTerminus;
             } else {
-                return endTerminus;
+                return secondTerminus;
             }
         }
 
@@ -167,9 +165,9 @@ public class StationViewer extends AppCompatActivity implements LoaderManager.Lo
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             if (position == 0) {
-                return TrainFragment.newInstance(startTerminus);
+                return TrainFragment.newInstance(firstTerminus, firstLayout);
             } else {
-                return TrainFragment.newInstance(endTerminus);
+                return TrainFragment.newInstance(secondTerminus, secondLayout);
             }
         }
 

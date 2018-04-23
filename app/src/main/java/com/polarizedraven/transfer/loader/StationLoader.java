@@ -14,7 +14,14 @@ public class StationLoader extends AsyncTaskLoader<Cursor> {
     private static final String TAG = StationLoader.class.toString();
 
     //Cursor adapters require a rowid
-    public static final String[] COLUMNS = {StopsDatabase.ROW_ID, StopsDatabase.STOP_COLUMN, StopsDatabase.LINE_ID_COLUMN};
+    public static final String[] COLUMNS = {StopsDatabase.ROW_ID,
+                                            StopsDatabase.STOP_COLUMN,
+                                            StopsDatabase.LINE_ID_COLUMN,
+                                            StopsDatabase.DIRECTION1,
+                                            StopsDatabase.DIRECTION2,
+                                            StopsDatabase.LAYOUT1,
+                                            StopsDatabase.LAYOUT2};
+
     private static final String SELECTION = String.format("%s = ? AND %s = ?", StopsDatabase.LINE_ID_COLUMN, StopsDatabase.STOP_COLUMN);
 
     private final int line_id;

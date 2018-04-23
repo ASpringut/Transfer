@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.polarizedraven.transfer.Exit;
-import com.polarizedraven.transfer.ExitAnchor;
 import com.polarizedraven.transfer.R;
 import com.polarizedraven.transfer.view.AutoResizeTextView;
 
@@ -41,6 +40,8 @@ public class TrainFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_TITLE = "title";
+    private static final String ARG_LAYOUT = "layout";
+
     private static final int LEFT_TRAINSET = 0;
     private static final int RIGHT_TRAINSET = 1;
     private static final int INTER_TRAIN_MARGIN = 5;
@@ -62,10 +63,11 @@ public class TrainFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static TrainFragment newInstance(String title) {
+    public static TrainFragment newInstance(String title, String layoutJSON) {
         TrainFragment fragment = new TrainFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TITLE, title);
+        args.putString(ARG_LAYOUT, layoutJSON);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,15 +78,13 @@ public class TrainFragment extends Fragment {
         trains.add(leftTrains);
         trains.add(rightTrains);
 
-
         View rootView = inflater.inflate(R.layout.fragment_station, container, false);
         ConstraintLayout tcl = rootView.findViewById(R.id.station_layout);
         ConstraintSet cs = new ConstraintSet();
 
         Gson gson = new Gson();
-        String station ="{\"exits\":[{\"exitText\":\"40thSt.&7thAv.\",\"leftExitAnchor\":{\"endCar\":1,\"endDoor\":1,\"startCar\":1,\"startDoor\":1},\"rightExitAnchor\":{\"endCar\":1,\"endDoor\":1,\"startCar\":1,\"startDoor\":1}},{\"exitText\":\"41stSt.&7thAv.\",\"leftExitAnchor\":{\"endCar\":5,\"endDoor\":0,\"startCar\":4,\"startDoor\":2},\"rightExitAnchor\":{\"endCar\":5,\"endDoor\":0,\"startCar\":4,\"startDoor\":2}},{\"exitText\":\"42stSt.&7thAv.\",\"leftExitAnchor\":{\"endCar\":9,\"endDoor\":2,\"startCar\":9,\"startDoor\":2},\"rightExitAnchor\":{\"endCar\":9,\"endDoor\":2,\"startCar\":9,\"startDoor\":2}}],\"trains\":[[{\"conductorCar\":5,\"doorsPerCar\":3,\"numberOfCars\":10}],[{\"conductorCar\":5,\"doorsPerCar\":3,\"numberOfCars\":10}]]}";
+        String station = getArguments().getString(ARG_LAYOUT);
         Station s = gson.fromJson(station, Station.class);
-
 
         for(int i=0;i<s.trains.get(0).size();i++) {
             Train t = s.trains.get(0).get(i);
